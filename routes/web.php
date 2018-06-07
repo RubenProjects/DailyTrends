@@ -18,3 +18,15 @@ Route::get('/', function () {
 Auth::routes();
 
 Route::get('/', 'HomeController@index')->name('home');
+
+Route::get('/create-feed',array(
+
+	'as' => 'createFeed',
+	'uses' => 'FeedController@createFeed'
+));
+ 
+ Route::post('/save-feed',array(
+
+	'as' => 'saveFeed',
+	'uses' => 'FeedController@saveFeed'
+));
