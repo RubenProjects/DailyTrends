@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
-
+use Goutte\Client;
 
 use App\Feed;
 
@@ -44,13 +44,65 @@ class FeedController extends Controller
     }
 
 
-    public function readFeeds(){
-        $feeds = Feed::paginate(5);
+    public function readFeeds(Client $client){
+
+       $crawler = $client->request('GET', 'https://elpais.com/');
+       
+       $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
+             $new_feed = new Feed();
+
+
+            $title = $feed->filter(".articulo-titulo")->first();
+            $body = $feed->filter(".foto-texto")->first();
+            $source = "https://politica.elpais.com";
+            $source .= $feed->filter(" a ")->attr('href');
+            $image = $feed->filter("img")->attr("src");
+            $publisher = $feed->filter(".foto-autor")->first();
+
+            $new_feed->title = $title->text();
+            $new_feed->body = $body->text();
+            $new_feed->source = $source;
+            $new_feed->publisher = $publisher->text();
+            $new_feed->image = $image;
+            $feed = Feed::where('title',$title->text())->first();
+            $feeds = Feed::paginate(5);
+
+            if(count($feed) > 0){
+                return view('home',array(
+                    'feeds'=> $feeds,
+                    
+                ));
+            }elseif($new_feed->save())
+            {
+
+             return view('home',array(
+                    'feeds'=> $feeds,
+                    'message' => 'Feed subido correctamente'
+             ));
+         }else{
+             return view('home',array(
+                    'feeds'=> $feeds,
+                    'message' => 'Error al subir el Feed'
+         ));
+         }
+                                 
+
+                 
+ 
+
+            
+
+   
+
+       
+      
      
-        return view('home',array(
-          'feeds'=> $feeds,
-        ));
-        }
+     
+    // return view('home',array(
+    //  
+    // ));
+    //
+    }
 
     
     
