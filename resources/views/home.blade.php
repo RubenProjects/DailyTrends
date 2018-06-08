@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="jumbotron">
-  <h1 class="text-center ">Binvenido</h1>
-</div>
+
 @if(session('message'))
 	<div class="alert alert-success">
 		{{session('message')}}
 	</div>
 @endif
 <div class="container">
+	<br><br>
+	<h1>Ultimas noticias <hr></h1>
 	@foreach($feeds as $feed)
 	<div class="col-md-offset-2 col-md-8">
 		<div class="panel panel-primary">

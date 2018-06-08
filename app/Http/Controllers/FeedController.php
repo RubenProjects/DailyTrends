@@ -72,9 +72,10 @@ class FeedController extends Controller
              $body = $feed->filter(".voc-news-subtit")->first();
              $source = "http://www.lasprovincias.es";
              $source .= $feed ->filter(".voc-title > a ")->attr("href");
-             $image = $feed->filter(".video-player")->attr("data-voc-video-player-poster");
-            $publisher = $feed->filter(".voc-photo-author");
-
+             $image = $feed->filter(".voc-home-image >picture >a > img")->attr("data-original");
+             
+            $publisher = $feed->filter(".voc-author-2 > author > a ");
+             
               $new_feed2->title = $title->text();
               $new_feed2->body = $body->text();
               $new_feed2->source = $source;
@@ -92,7 +93,7 @@ class FeedController extends Controller
                 $new_feed2->save();
                }
 
-               $feeds = Feed::paginate(5);
+               $feeds = Feed::orderBy('id','Desc')->paginate(5);
 
                return view('home',array(
                     'feeds'=> $feeds,
