@@ -45,46 +45,62 @@ class FeedController extends Controller
 
 
     public function readFeeds(Client $client){
+        $crawler = $client->request('GET', 'https://elpais.com/'); 
+       $crawler2 = $client->request('GET', 'http://www.lasprovincias.es');
 
-       $crawler = $client->request('GET', 'https://elpais.com/');
-       
        $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
              $new_feed = new Feed();
+             $new_feed2 = new Feed();
 
 
             $title = $feed->filter(".articulo-titulo")->first();
-            $body = $feed->filter(".foto-texto")->first();
+            // $body = $feed->filter(".foto-texto")->first();
             $source = "https://politica.elpais.com";
             $source .= $feed->filter(" a ")->attr('href');
             $image = $feed->filter("img")->attr("src");
-            $publisher = $feed->filter(".foto-autor")->first();
+            // $publisher = $feed->filter(".foto-autor")->first();
 
             $new_feed->title = $title->text();
-            $new_feed->body = $body->text();
+            // $new_feed->body = $body->text();
             $new_feed->source = $source;
-            $new_feed->publisher = $publisher->text();
+            // $new_feed->publisher = $publisher->text();
             $new_feed->image = $image;
-            $feed = Feed::where('title',$title->text())->first();
-            $feeds = Feed::paginate(5);
+           
 
-            if(count($feed) > 0){
-                return view('home',array(
-                    'feeds'=> $feeds,
-                    
-                ));
-            }elseif($new_feed->save())
-            {
+             $feed = $crawler2->filter(".voc-home-article")->first();
+             $title = $feed->filter(".voc-title");
+             $body = $feed->filter(".voc-news-subtit")->first();
+             $source = "http://www.lasprovincias.es";
+             $source .= $feed ->filter(".voc-title > a ")->attr("href");
+             $image = $feed->filter(".video-player")->attr("data-voc-video-player-poster");
+            $publisher = $feed->filter(".voc-photo-author");
 
-             return view('home',array(
+              $new_feed2->title = $title->text();
+              $new_feed2->body = $body->text();
+              $new_feed2->source = $source;
+              $new_feed2->publisher = $publisher->text();
+              $new_feed2->image = $image;
+
+            $feed = Feed::where('title',$new_feed->title)->first();
+               $feed2 = Feed::where('title',$new_feed2->title)->first();
+
+               if(count($feed) == 0){
+                 $new_feed->save();
+               }
+
+               if(count($feed2) == 0){
+                $new_feed2->save();
+               }
+
+               $feeds = Feed::paginate(5);
+
+               return view('home',array(
                     'feeds'=> $feeds,
-                    'message' => 'Feed subido correctamente'
-             ));
-         }else{
-             return view('home',array(
-                    'feeds'=> $feeds,
-                    'message' => 'Error al subir el Feed'
-         ));
-         }
+                     'message' => 'Feed subido correctamente'
+              ));
+                
+
+ 
                                  
 
                  
