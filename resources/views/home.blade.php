@@ -29,7 +29,7 @@
 					{{$feed->source}}  
 					<a href="{{route('deleteFeed', ['feed_id' => $feed->id])}}" class="btn btn-sm btn-danger pull-right">X</a>
 
-					<a href="{{route('deleteFeed', ['feed_id' => $feed->id])}}" class="btn btn-sm btn-warning pull-right"> <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
+					<a href="{{route('editFeed', ['feed_id' => $feed->id])}}" class="btn btn-sm btn-warning pull-right"> <span class="glyphicon glyphicon-edit" aria-hidden="true"></span></a>
 					
  						
  				</div>

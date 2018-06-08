@@ -40,3 +40,15 @@ Route::get('/delete-feed/{feed_id}', array(
 	'uses'=>'FeedController@deleteFeed'
 ));
 
+Route::get('/edit/{feed_id}',array(
+
+	'as' => 'editFeed',
+	'uses' => 'FeedController@editFeed'
+));
+
+Route::post('/update-feed/{feed_id}',array(
+
+	'as' => 'updateFeed',
+	'uses' => 'FeedController@updateFeed'
+));
+
