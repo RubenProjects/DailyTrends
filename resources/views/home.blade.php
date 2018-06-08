@@ -14,7 +14,8 @@
 	<div class="col-md-offset-2 col-md-8">
 		<div class="panel panel-primary">
 	 		<div class="panel-heading">{{$feed->title}}
-	 		   <div class="pull-right">{{$feed->publisher}}
+	 		   <div class="pull-right">{{\FormatTime::LongTimeFilter($feed->created_at)}}
+
 	 		   </div>
 	 		</div>
  			<div class="panel-body">
@@ -31,7 +32,8 @@
  					
  				</div>
  				<div class="col-md-6">
- 					{{$feed->body}}
+ 					{{$feed->body}} <br> <div class="pull-right">{{$feed->publisher}}</div>		
+
  				</div>
  			</div>
  				<div class="panel-footer">

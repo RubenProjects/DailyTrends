@@ -58,12 +58,12 @@ class FeedController extends Controller
             $source = "https://politica.elpais.com";
             $source .= $feed->filter(" a ")->attr('href');
             $image = $feed->filter("img")->attr("src");
-            // $publisher = $feed->filter(".foto-autor")->first();
+            $publisher = $feed->filter(".autor-texto > span > a")->first();
 
             $new_feed->title = $title->text();
             // $new_feed->body = $body->text();
             $new_feed->source = $source;
-            // $new_feed->publisher = $publisher->text();
+            $new_feed->publisher = $publisher->text();
             $new_feed->image = $image;
            
 
