@@ -57,8 +57,20 @@ class FeedController extends Controller
         
     }
 
-    public function deleteFeed(){
+    public function deleteFeed($feed_id){
+       $feed = Feed::find($feed_id);
+       Storage::disk('images')->delete($feed->image);
+       if($feed->delete()){
 
-    }
+         $message = array( 'message' => 'Feed eliminado correctamente');
+
+        }else{
+             $message = array( 'message' => 'Error al borrar el feed');
+        }
+
+         return redirect()->route('home')->with($message);
+
+           
+       }
 
 }

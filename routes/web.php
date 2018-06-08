@@ -10,7 +10,7 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
+ 
 
 Auth::routes();
 
@@ -20,7 +20,7 @@ Route::get('/create-feed',array(
 	'as' => 'createFeed',
 	'uses' => 'FeedController@createFeed'
 ));
- 
+  
  Route::post('/save-feed',array(
 
 	'as' => 'saveFeed',
@@ -34,4 +34,9 @@ Route::get('/',array(
 	'uses' => 'FeedController@readFeeds'
 ));
 
+
+Route::get('/delete-feed/{feed_id}', array(
+	'as' =>'deleteFeed',
+	'uses'=>'FeedController@deleteFeed'
+));
 
