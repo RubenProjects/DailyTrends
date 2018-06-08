@@ -42,12 +42,19 @@ class FeedController extends Controller
            
     }
 
-    public function readFeed(){
 
+    public function readFeeds(){
+        $feeds = Feed::paginate(5);
+
+    return view('home',array(
+      'feeds'=> $feeds,
+    ));
     }
 
+    
+    
     public function updateFeed(){
-
+        
     }
 
     public function deleteFeed(){

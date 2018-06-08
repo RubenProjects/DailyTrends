@@ -30,7 +30,7 @@
 		  </div>
 		</div>
 		 <div class="form-group">
-		  <label class="col-md-3 control-label" for="publisher">Editor</label>  
+		  <label class="col-md-3 control-label" for="publisher">Periodico</label>  
 		  <div class="col-md-8">
 		  <input id="publisher" name="publisher" type="text" placeholder="Escriba aqui" class="form-control input-md" required="">
 		    

@@ -11,13 +11,9 @@
 |
 */
 
-Route::get('/', function () {
-    return view('home');
-});
 
 Auth::routes();
 
-Route::get('/', 'HomeController@index')->name('home');
 
 Route::get('/create-feed',array(
 
@@ -30,3 +26,12 @@ Route::get('/create-feed',array(
 	'as' => 'saveFeed',
 	'uses' => 'FeedController@saveFeed'
 ));
+
+
+Route::get('/',array(
+
+	'as' => 'home',
+	'uses' => 'FeedController@readFeeds'
+));
+
+
