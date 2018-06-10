@@ -10,6 +10,9 @@
 <div class="container">
 	<br><br>
 	<h1>Ultimas noticias <hr></h1>
+	<div class="col-md-offset-2 col-md-8">
+	<a href="{{route('ReadFeeds')}}" class="btn btn-warning pull-right">Actualizar Feeds</a>
+	</div><br><br><br>
 	@foreach($feeds as $feed)
 	<div class="col-md-offset-2 col-md-8">
 		<div class="panel panel-primary">
@@ -20,13 +23,13 @@
 	 		</div>
  			<div class="panel-body">
  				<div class="col-md-6"> 
- 					<?php $valor =  strpos ( $feed->image , "static") ?>
+ 					<?php $valor =  strpos ( $feed->image , "storage") ?>
 
- 					@if($valor == false)
+ 					@if($valor == true)
  					 	<img width="200px;" src="../storage/app/images/{{$feed->image}}" >
- 					 @else()
+ 					@else
  					 	<img width="200px;" src="{{$feed->image}}">
- 					 	 						@endif
+ 					@endif
 
 
  					

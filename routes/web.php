@@ -31,7 +31,7 @@ Route::get('/create-feed',array(
 Route::get('/',array(
 
 	'as' => 'home',
-	'uses' => 'FeedController@readFeeds'
+	'uses' => 'FeedController@index'
 ));
 
 
@@ -52,3 +52,8 @@ Route::post('/update-feed/{feed_id}',array(
 	'uses' => 'FeedController@updateFeed'
 ));
 
+Route::get('/read-feeds',array(
+
+	'as' => 'ReadFeeds',
+	'uses' => 'FeedController@readFeeds'
+));

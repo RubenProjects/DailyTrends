@@ -43,6 +43,15 @@ class FeedController extends Controller
            
     }
 
+    public function index(){
+        $feeds = Feed::orderBy('id','Desc')->paginate(5);
+
+               return view('home',array(
+                    'feeds'=> $feeds,
+              ));
+                
+    }
+
 
     public function readFeeds(Client $client){
         $crawler = $client->request('GET', 'https://elpais.com/'); 
@@ -57,7 +66,9 @@ class FeedController extends Controller
             // $body = $feed->filter(".foto-texto")->first();
             $source = "https://politica.elpais.com";
             $source .= $feed->filter(" a ")->attr('href');
-            $image = $feed->filter("img")->attr("src");
+            $image = $feed->filter("img")->attr("data-src");
+                        
+
             $publisher = $feed->filter(".autor-texto > span > a")->first();
 
             $new_feed->title = $title->text();
@@ -93,32 +104,14 @@ class FeedController extends Controller
                 $new_feed2->save();
                }
 
-               $feeds = Feed::orderBy('id','Desc')->paginate(5);
-
-               return view('home',array(
-                    'feeds'=> $feeds,
-                     'message' => 'Feed subido correctamente'
-              ));
-                
-
- 
-                                 
-
+               $feeds = Feed::orderBy('id','Desc')->paginate(5);        
+             
+               return redirect()->route('home')->with(array(
                  
- 
+                 'message' => 'Feed actualizado correctamente'
 
-            
-
-   
-
-       
-      
-     
-     
-    // return view('home',array(
-    //  
-    // ));
-    //
+         ));
+                
     }
 
     
@@ -126,9 +119,7 @@ class FeedController extends Controller
     public function editFeed($feed_id){
         $feed = Feed::findOrFail($feed_id);
         
-          return view('Feed.editFeed',array('feed' => $feed));
-
-        
+          return view('Feed.editFeed',array('feed' => $feed));   
     }
     public function updateFeed($feed_id, Request $request){
         $feed = Feed::findOrFail($feed_id);
