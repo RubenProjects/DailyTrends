@@ -55,120 +55,115 @@ class FeedController extends Controller
 
     public function readFeeds(Client $client){
         $crawler = $client->request('GET', 'https://elpais.com/'); 
-       $crawler2 = $client->request('GET', 'http://www.lasprovincias.es');
+        $crawler2 = $client->request('GET', 'http://www.lasprovincias.es');
+        $new_feed = new Feed();
+        $new_feed2 = new Feed();
 
-       $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
-             $new_feed = new Feed();
-             $new_feed2 = new Feed();
+        //Filter to ElPais
+        $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
+        $title = $feed->filter(".articulo-titulo")->first();
+        $source1 = $feed->filter(" a ")->attr('href');
+        $search =  strpos ( $source1 , "elpais");
+        if(!$search){       
+            $source = "https://elpais.com" . $source1;       
+        }
+        $image = $feed->filter("img")->attr("data-src");
+        $publisher = $feed->filter(".autor-texto > span > a")->first();
+        //Saving in entity feed
+        $new_feed->title = $title->text();
+        $new_feed->source = $source;
+        $new_feed->publisher = $publisher->text();
+        $new_feed->image = $image;
+       
+        //Filter to Las Provincias
+        $feed = $crawler2->filter(".voc-home-article")->first();
+        $title = $feed->filter(".voc-title");
+        $body = $feed->filter(".voc-news-subtit")->first();
+        $source = "http://www.lasprovincias.es";
+        $source .= $feed ->filter(".voc-title > a ")->attr("href");
+        $image = $feed->filter(".voc-home-image >picture >a > img")->attr("data-original");           
+        $publisher = $feed->filter(".voc-author-2 > author > a ");
+         
+        //Saving in entity Feed 
+        $new_feed2->title = $title->text();
+        $new_feed2->body = $body->text();
+        $new_feed2->source = $source;
+        $new_feed2->publisher = $publisher->text();
+        $new_feed2->image = $image;
 
+        //Comparing if it were saved the feed previously 
+        $feed = Feed::where('title',$new_feed->title)->first();
+        $feed2 = Feed::where('title',$new_feed2->title)->first();
 
-            $title = $feed->filter(".articulo-titulo")->first();
-            // $body = $feed->filter(".foto-texto")->first();
-            // $source = "https://elpais.com";
-            $source1 = $feed->filter(" a ")->attr('href');
-            $search =  strpos ( $source1 , "elpais");
-            if(!$search){
-                 
-                $source = "https://elpais.com" . $source1;
-                 
-            }
-            $image = $feed->filter("img")->attr("data-src");
-
-
-            $publisher = $feed->filter(".autor-texto > span > a")->first();
-
-            $new_feed->title = $title->text();
-            // $new_feed->body = $body->text();
-            $new_feed->source = $source;
-            $new_feed->publisher = $publisher->text();
-            $new_feed->image = $image;
-           
-
-             $feed = $crawler2->filter(".voc-home-article")->first();
-             $title = $feed->filter(".voc-title");
-             $body = $feed->filter(".voc-news-subtit")->first();
-             $source = "http://www.lasprovincias.es";
-             $source .= $feed ->filter(".voc-title > a ")->attr("href");
-             $image = $feed->filter(".voc-home-image >picture >a > img")->attr("data-original");
+        // if not, we save the feeds in the database
+        if(count($feed) == 0){
+            $new_feed->save();
+        }
+        if(count($feed2) == 0){
+           $new_feed2->save();
+        }
+         
+        return redirect()->route('home')->with(array(
              
-            $publisher = $feed->filter(".voc-author-2 > author > a ");
-             
-              $new_feed2->title = $title->text();
-              $new_feed2->body = $body->text();
-              $new_feed2->source = $source;
-              $new_feed2->publisher = $publisher->text();
-              $new_feed2->image = $image;
-
-               $feed = Feed::where('title',$new_feed->title)->first();
-               $feed2 = Feed::where('title',$new_feed2->title)->first();
-
-               if(count($feed) == 0){
-                 $new_feed->save();
-               }
-
-               if(count($feed2) == 0){
-                $new_feed2->save();
-               }
-             
-               return redirect()->route('home')->with(array(
-                 
-                 'message' => 'Feed actualizado correctamente'
-
-         ));
+            'message' => 'Feed actualizado correctamente'
+        ));
                 
     }
 
     
     
     public function editFeed($feed_id){
+        //Search a feed with a particular id
         $feed = Feed::findOrFail($feed_id);
         
-          return view('Feed.editFeed',array('feed' => $feed));   
+        return view('Feed.editFeed',array('feed' => $feed));   
     }
     public function updateFeed($feed_id, Request $request){
+        //Search the id feed
         $feed = Feed::findOrFail($feed_id);
-        
-         $feed->title = $request->input('title');
-         $feed->body = $request->input('body');
-         $feed->source = $request->input('source');
-         $feed->publisher = $request->input('publisher');
-         $image = $request->file('image');
-
-         if($image){
+        //Updating the data
+        $feed->title = $request->input('title');
+        $feed->body = $request->input('body');
+        $feed->source = $request->input('source');
+        $feed->publisher = $request->input('publisher');
+        $image = $request->file('image');
+        if($image){
             $image_path = time().$image->getClientOriginalName();
             \Storage::disk('images')->put($image_path, \File::get($image));
-         $feed->image = $image_path;
-         }
+            $feed->image = $image_path;
+        }
 
-         if($feed->update())
-         {
+        if($feed->update())
+        {
+            return redirect()->route('home')->with(array(
+               'message' => 'Feed actualizado correctamente'
+            ));
+        }else{
              return redirect()->route('home')->with(array(
-                    'message' => 'Feed actualizado correctamente'
-         ));
-         }else{
-             return redirect()->route('home')->with(array(
-                    'message' => 'Error al actualizar el Feed'
-         ));
-         }
-         
-          
-
+               'message' => 'Error al actualizar el Feed'
+            ));
+        }
     }
 
     public function deleteFeed($feed_id){
-       $feed = Feed::findorfail($feed_id);
-       Storage::disk('images')->delete($feed->image);
-       if($feed->delete()){
+       //Search the id to delete()
+        $feed = Feed::findorfail($feed_id);
 
-         $message = array( 'message' => 'Feed eliminado correctamente');
+       //Delete the image information
+        Storage::disk('images')->delete($feed->image);
+
+        //Delete de feed
+        if($feed->delete()){
+
+            $message = array( 'message' => 'Feed eliminado correctamente');
 
         }else{
-             $message = array( 'message' => 'Error al borrar el feed');
+            
+            $message = array( 'message' => 'Error al borrar el feed');
         }
 
-         return redirect()->route('home')->with($message);
-
-           
-       }
+        return redirect()->route('home')->with($message);
+       
+    }
 
 }

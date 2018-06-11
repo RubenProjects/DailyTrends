@@ -58,10 +58,6 @@
 		  </div>
 		</div>
 		
-		 
-	
-	<!-- Button -->
-	<!-- Button -->
 	<div class="form-group">
 	  <label class="col-md-4 control-label" for="enviar"></label>
 	  <div class="col-md-4">
