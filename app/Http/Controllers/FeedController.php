@@ -64,10 +64,16 @@ class FeedController extends Controller
 
             $title = $feed->filter(".articulo-titulo")->first();
             // $body = $feed->filter(".foto-texto")->first();
-            $source = "https://politica.elpais.com";
-            $source .= $feed->filter(" a ")->attr('href');
+            // $source = "https://elpais.com";
+            $source1 = $feed->filter(" a ")->attr('href');
+            $search =  strpos ( $source1 , "elpais");
+            if(!$search){
+                 
+                $source = "https://elpais.com" . $source1;
+                 
+            }
             $image = $feed->filter("img")->attr("data-src");
-                        
+
 
             $publisher = $feed->filter(".autor-texto > span > a")->first();
 
@@ -93,7 +99,7 @@ class FeedController extends Controller
               $new_feed2->publisher = $publisher->text();
               $new_feed2->image = $image;
 
-            $feed = Feed::where('title',$new_feed->title)->first();
+               $feed = Feed::where('title',$new_feed->title)->first();
                $feed2 = Feed::where('title',$new_feed2->title)->first();
 
                if(count($feed) == 0){
@@ -103,8 +109,6 @@ class FeedController extends Controller
                if(count($feed2) == 0){
                 $new_feed2->save();
                }
-
-               $feeds = Feed::orderBy('id','Desc')->paginate(5);        
              
                return redirect()->route('home')->with(array(
                  

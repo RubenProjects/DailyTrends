@@ -40,7 +40,18 @@
 		<div class="form-group">
 		  <label class="col-md-3 control-label" for="image">Imagen</label>  
 		  <div class="col-md-8">
-		  	 	<img width="100px;" src="../../storage/app/images/{{$feed->image}}">
+
+ 					<?php $valor =  strpos ( $feed->image , "ep01") ?>
+ 					<?php $valor1 =  strpos ( $feed->image , "static") ?>
+
+ 					@if($valor || $valor1)
+ 						<img width="200px;" src="{{$feed->image}}">	 
+
+
+ 					@else
+						<img width="200px;" src="../../storage/app/images/{{$feed->image}}" >
+	 					@endif
+		  	 	
 
 		  <input id="image" name="image" type="file" value="{{$feed->image}}" placeholder="" class="form-control input-md">
 		    

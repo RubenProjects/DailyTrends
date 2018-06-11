@@ -23,13 +23,16 @@
 	 		</div>
  			<div class="panel-body">
  				<div class="col-md-6"> 
- 					<?php $valor =  strpos ( $feed->image , "storage") ?>
+ 					<?php $valor =  strpos ( $feed->image , "ep01") ?>
+ 					<?php $valor1 =  strpos ( $feed->image , "static") ?>
 
- 					@if($valor == true)
- 					 	<img width="200px;" src="../storage/app/images/{{$feed->image}}" >
+ 					@if($valor || $valor1)
+ 						<img width="200px;" src="{{$feed->image}}">	 
+
+
  					@else
- 					 	<img width="200px;" src="{{$feed->image}}">
- 					@endif
+						<img width="200px;" src="../storage/app/images/{{$feed->image}}" >
+	 					@endif
 
 
  					
