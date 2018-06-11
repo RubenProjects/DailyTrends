@@ -58,66 +58,78 @@ class FeedController extends Controller
         $crawler2 = $client->request('GET', 'http://www.lasprovincias.es');
         $new_feed = new Feed();
         $new_feed2 = new Feed();
+        if($crawler->filter(".articulos_apertura > .articulos__interior")->first()->count()){
+             $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
 
-        //Filter to ElPais
-        $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
-        $title = $feed->filter(".articulo-titulo")->first();
-        $source1 = $feed->filter(" a ")->attr('href');
-        $search =  strpos ( $source1 , "elpais");
-        if(!$search){       
-            $source = "https://elpais.com" . $source1;       
-        }
-        $image = $feed->filter("img")->attr("data-src");
-        $publisher = $feed->filter(".autor-texto > span > a")->first();
-        //Saving in entity feed
-        $new_feed->title = $title->text();
-        $new_feed->source = $source;
-        $new_feed->publisher = $publisher->text();
-        $new_feed->image = $image;
-       
-        //Filter to Las Provincias
-        $feed = $crawler2->filter(".voc-home-article")->first();
-        $title = $feed->filter(".voc-title");
-        $body = $feed->filter(".voc-news-subtit")->first();
-        $source = "http://www.lasprovincias.es";
-        $source .= $feed ->filter(".voc-title > a ")->attr("href");
-        $image = $feed->filter(".voc-home-image >picture >a > img")->attr("data-original");           
-        $publisher = $feed->filter(".voc-author-2 > author > a ");
-         
-        //Saving in entity Feed 
-        $new_feed2->title = $title->text();
-        $new_feed2->body = $body->text();
-        $new_feed2->source = $source;
-        $new_feed2->publisher = $publisher->text();
-        $new_feed2->image = $image;
+             //Filter to ElPais
+            if($feed->filter(".articulo-titulo ")->count() && $feed->filter(" img ")->count() && $feed->filter(".autor-texto ")->count()){
 
-        //Comparing if it were saved the feed previously 
-        $feed = Feed::where('title',$new_feed->title)->first();
-        $feed2 = Feed::where('title',$new_feed2->title)->first();
+                $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
+                $title = $feed->filter(".articulo-titulo")->first();
+                $source1 = $feed->filter(" a ")->attr('href');
+                $search =  strpos ( $source1 , "elpais");
+                if(!$search){       
+                    $source = "https://elpais.com" . $source1;       
+                }
+                $image = $feed->filter("img")->attr("data-src");
+                $publisher = $feed->filter(".autor-texto > span > a")->first();
 
-        // if not, we save the feeds in the database
-        if(count($feed) == 0){
-            $new_feed->save();
+                //Saving in entity feed
+                $new_feed->title = $title->text();
+                $new_feed->source = $source;
+                $new_feed->publisher = $publisher->text();
+                $new_feed->image = $image;
+
+                $feed = Feed::where('title',$new_feed->title)->first();
+                if(count($feed) == 0){
+                $new_feed->save();
+                }
+            }      
         }
-        if(count($feed2) == 0){
-           $new_feed2->save();
-        }
-         
+
+        if($crawler2->filter(".voc-home-article")->first()->count()){
+            $feed = $crawler2->filter(".voc-home-article")->first();
+
+            if($feed->filter(".voc-title")->count() && $feed->filter(".voc-news-subtit  ")->count() && $feed->filter(" .voc-title ")->count() && $feed->filter(" .voc-home-image") && $feed->filter(" .voc-author-2" )->count()){
+
+                //Filter to Las Provincias
+               
+                $title = $feed->filter(".voc-title");
+                $body = $feed->filter(".voc-news-subtit")->first();
+                $source = "http://www.lasprovincias.es";
+                $source .= $feed ->filter(".voc-title > a ")->attr("href");
+                $image = $feed->filter(".voc-home-image >picture >a > img")->attr("data-original");           
+                $publisher = $feed->filter(".voc-author-2 > author > a ");
+                 
+                //Saving in entity Feed 
+                $new_feed2->title = $title->text();
+                $new_feed2->body = $body->text();
+                $new_feed2->source = $source;
+                $new_feed2->publisher = $publisher->text();
+                $new_feed2->image = $image;
+                
+                $feed2 = Feed::where('title',$new_feed2->title)->first();
+                if(count($feed2) == 0){
+                   $new_feed2->save();
+                }
+            }
+        }    
+  
         return redirect()->route('home')->with(array(
              
             'message' => 'Feed actualizado correctamente'
-        ));
-                
+        ));                
     }
+    
 
-    
-    
     public function editFeed($feed_id){
         //Search a feed with a particular id
         $feed = Feed::findOrFail($feed_id);
         
         return view('Feed.editFeed',array('feed' => $feed));   
     }
+
+
     public function updateFeed($feed_id, Request $request){
         //Search the id feed
         $feed = Feed::findOrFail($feed_id);
@@ -145,6 +157,7 @@ class FeedController extends Controller
         }
     }
 
+
     public function deleteFeed($feed_id){
        //Search the id to delete()
         $feed = Feed::findorfail($feed_id);
@@ -162,8 +175,7 @@ class FeedController extends Controller
             $message = array( 'message' => 'Error al borrar el feed');
         }
 
-        return redirect()->route('home')->with($message);
-       
+        return redirect()->route('home')->with($message);  
     }
 
 }
