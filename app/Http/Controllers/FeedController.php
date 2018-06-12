@@ -75,6 +75,9 @@ class FeedController extends Controller
 
                 $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
                 $title = $feed->filter(".articulo-titulo")->first();
+                if($feed->filter(".articulo-entradilla")->count()){
+                    $body = $feed->filter(".articulo-entradilla");
+                }
                 $source = $feed->filter(" a ")->attr('href');
                 $search =  strpos ( $source, "elpais");
                 if(!$search){       
@@ -85,6 +88,9 @@ class FeedController extends Controller
 
                 //Saving in entity feed
                 $new_feed->title = $title->text();
+                if($feed->filter(".articulo-entradilla")->count()){
+                $new_feed->body = $body->text();
+                }
                 $new_feed->source = $source;
                 $new_feed->publisher = $publisher->text();
                 $new_feed->image = $image;
