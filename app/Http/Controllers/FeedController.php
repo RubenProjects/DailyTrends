@@ -19,6 +19,15 @@ class FeedController extends Controller
     }
 
     public function saveFeed(Request $request){
+        $validateData = $this->validate($request, [
+           'title' =>'required',
+           'body' =>'required',
+           'image' =>'required|image|size:5000',
+           'source' => 'required',
+           'publisher' =>'required'
+       ]);
+        
+
         $feed = new Feed();
         $feed->title = $request->input('title');
         $feed->body = $request->input('body');
@@ -37,7 +46,7 @@ class FeedController extends Controller
          ));
          }else{
              return redirect()->route('home')->with(array(
-                    'message' => 'Error al subir el Feed'
+                    'error' => 'Error al subir el Feed'
          ));
          }
            
@@ -66,10 +75,10 @@ class FeedController extends Controller
 
                 $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
                 $title = $feed->filter(".articulo-titulo")->first();
-                $source1 = $feed->filter(" a ")->attr('href');
-                $search =  strpos ( $source1 , "elpais");
+                $source = $feed->filter(" a ")->attr('href');
+                $search =  strpos ( $source, "elpais");
                 if(!$search){       
-                    $source = "https://elpais.com" . $source1;       
+                    $source = "https://elpais.com" . $source;       
                 }
                 $image = $feed->filter("img")->attr("data-src");
                 $publisher = $feed->filter(".autor-texto > span > a")->first();
@@ -84,13 +93,18 @@ class FeedController extends Controller
                 if(count($feed) == 0){
                 $new_feed->save();
                 }
+            }else{
+                return redirect()->route('home')->with(array(
+             
+            'error' => 'No se pudo actualizar El Pais'
+        )); 
             }      
         }
 
         if($crawler2->filter(".voc-home-article")->first()->count()){
             $feed = $crawler2->filter(".voc-home-article")->first();
 
-            if($feed->filter(".voc-title")->count() && $feed->filter(".voc-news-subtit  ")->count() && $feed->filter(" .voc-title ")->count() && $feed->filter(" .voc-home-image") && $feed->filter(" .voc-author-2" )->count()){
+            if($feed->filter(".voc-title")->count() && $feed->filter(".voc-news-subtit  ")->count() && $feed->filter(" .voc-title > a ")->count() && $feed->filter(" .voc-home-image > picture > a > img") && $feed->filter(" .voc-author-2 > author > a" )->count()){
 
                 //Filter to Las Provincias
                
@@ -112,6 +126,11 @@ class FeedController extends Controller
                 if(count($feed2) == 0){
                    $new_feed2->save();
                 }
+            }else{
+                return redirect()->route('home')->with(array(
+             
+            'error' => 'No se pudo actualizar Las Provincias'
+        )); 
             }
         }    
   

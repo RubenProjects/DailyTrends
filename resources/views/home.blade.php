@@ -6,6 +6,11 @@
 			{{session('message')}}
 		</div>
 	@endif
+	@if(session('error'))
+		<div class="alert alert-danger">
+			{{session('error')}}
+		</div>
+	@endif
 	<div class="container">
 		<br><br>
 		<h1>Ultimas noticias <hr></h1>

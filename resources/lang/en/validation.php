@@ -42,7 +42,7 @@ return [
     'exists'               => 'The selected :attribute is invalid.',
     'file'                 => 'The :attribute must be a file.',
     'filled'               => 'The :attribute field must have a value.',
-    'image'                => 'The :attribute must be an image.',
+    'image'                => 'El campo :attribute debe ser un archivo de imagen.',
     'in'                   => 'The selected :attribute is invalid.',
     'in_array'             => 'The :attribute field does not exist in :other.',
     'integer'              => 'The :attribute must be an integer.',
@@ -51,8 +51,8 @@ return [
     'ipv6'                 => 'The :attribute must be a valid IPv6 address.',
     'json'                 => 'The :attribute must be a valid JSON string.',
     'max'                  => [
-        'numeric' => 'The :attribute may not be greater than :max.',
-        'file'    => 'The :attribute may not be greater than :max kilobytes.',
+        'numeric' => 'La :attribute no puede ser mayor de :max.',
+        'file'    => 'TEl campo :attribute no puede ser mayor de :max kilobytes.',
         'string'  => 'The :attribute may not be greater than :max characters.',
         'array'   => 'The :attribute may not have more than :max items.',
     ],
@@ -68,7 +68,7 @@ return [
     'numeric'              => 'The :attribute must be a number.',
     'present'              => 'The :attribute field must be present.',
     'regex'                => 'The :attribute format is invalid.',
-    'required'             => 'The :attribute field is required.',
+    'required'             => 'El campo :attribute es necesario.',
     'required_if'          => 'The :attribute field is required when :other is :value.',
     'required_unless'      => 'The :attribute field is required unless :other is in :values.',
     'required_with'        => 'The :attribute field is required when :values is present.',
@@ -85,7 +85,7 @@ return [
     'string'               => 'The :attribute must be a string.',
     'timezone'             => 'The :attribute must be a valid zone.',
     'unique'               => 'The :attribute has already been taken.',
-    'uploaded'             => 'The :attribute failed to upload.',
+    'uploaded'             => 'Error al guardar el campo :attribute.',
     'url'                  => 'The :attribute format is invalid.',
 
     /*
