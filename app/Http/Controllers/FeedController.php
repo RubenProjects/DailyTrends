@@ -71,7 +71,7 @@ class FeedController extends Controller
              $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
 
              //Filter to ElPais
-            if($feed->filter(".articulo-titulo ")->count() && $feed->filter(" img ")->count() && $feed->filter(".autor-texto ")->count()){
+            if($feed->filter(".articulo-titulo ")->count() && $feed->filter(" a ")->count() &&  $feed->filter(" img ")->count() && $feed->filter(".autor-texto ")->count()){
 
                 $feed = $crawler->filter(".articulos_apertura > .articulos__interior")->first();
                 $title = $feed->filter(".articulo-titulo")->first();
@@ -94,17 +94,20 @@ class FeedController extends Controller
                 $new_feed->save();
                 }
             }else{
-                return redirect()->route('home')->with(array(
-             
-            'error' => 'No se pudo actualizar El Pais'
-        )); 
-            }      
-        }
+                return redirect()->route('home')->with(array(    
+                   'error' => 'No se pudo actualizar El Pais'
+                 )); 
+            }  
+               
+        }else{
+            return redirect()->route('home')->with(array(    
+               'error' => 'No se pudo actualizar El Pais'
+             )); 
+        } 
 
         if($crawler2->filter(".voc-home-article")->first()->count()){
             $feed = $crawler2->filter(".voc-home-article")->first();
-
-            if($feed->filter(".voc-title")->count() && $feed->filter(".voc-news-subtit  ")->count() && $feed->filter(" .voc-title > a ")->count() && $feed->filter(" .voc-home-image > picture > a > img") && $feed->filter(" .voc-author-2 > author > a" )->count()){
+            if($feed->filter(".voc-title")->count() && $feed->filter(".voc-news-subtit  ")->count() && $feed->filter(" .voc-title > a ")->count() && ($feed->filter(" .voc-home-image > picture > a > img")->count() || $feed->filter(".voc-home-image >picture>a >.video-player")->attr("data-voc-video-player-poster"))  && $feed->filter(" .voc-author-2 > author > a" )->count()){
 
                 //Filter to Las Provincias
                
@@ -112,7 +115,12 @@ class FeedController extends Controller
                 $body = $feed->filter(".voc-news-subtit")->first();
                 $source = "http://www.lasprovincias.es";
                 $source .= $feed ->filter(".voc-title > a ")->attr("href");
-                $image = $feed->filter(".voc-home-image >picture >a > img")->attr("data-original");           
+                // dd($feed->filter(".voc-home-image >picture>a")->html());
+                if($feed->filter(".voc-home-image >picture >a > img")->count()){
+                    $image = $feed->filter(".voc-home-image >picture >a > img")->attr("data-original");           
+                }else{
+                    $image = $feed->filter(".voc-home-image >picture>a >.video-player")->attr("data-voc-video-player-poster");
+                }
                 $publisher = $feed->filter(".voc-author-2 > author > a ");
                  
                 //Saving in entity Feed 
@@ -129,10 +137,14 @@ class FeedController extends Controller
             }else{
                 return redirect()->route('home')->with(array(
              
-            'error' => 'No se pudo actualizar Las Provincias'
-        )); 
-            }
-        }    
+                    'error' => 'No se pudo actualizar Las Provincias'
+                )); 
+                }
+        }else{
+            return redirect()->route('home')->with(array(    
+               'error' => 'No se pudo actualizar Las Provincias'
+             )); 
+        }     
   
         return redirect()->route('home')->with(array(
              
